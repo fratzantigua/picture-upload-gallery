@@ -93,12 +93,8 @@ export const ImageFormDialog = ({
 
         <div className="space-y-6">
           {/* Thumbnail Image */}
-          <div className="aspect-video w-full overflow-hidden rounded-lg border border-border">
-            <img
-              src={imageSrc}
-              alt="Selected"
-              className="w-full h-full object-cover"
-            />
+          <div className="overflow-hidden rounded-lg border border-border">
+            <img src={imageSrc} alt="Selected" className="mx-auto" />
           </div>
 
           {/* Store Name Section */}

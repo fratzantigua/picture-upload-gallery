@@ -7,15 +7,15 @@ interface GalleryCardProps {
 
 export const GalleryCard = ({ image, onClick }: GalleryCardProps) => {
   return (
-    <Card 
+    <Card
       className="group overflow-hidden cursor-pointer border-border transition-all duration-300 hover:shadow-[var(--shadow-hover)] hover:-translate-y-1"
       onClick={onClick}
     >
-      <div className="aspect-video overflow-hidden bg-muted">
-        <img 
-          src={image} 
+      <div className="overflow-hidden bg-muted">
+        <img
+          src={image}
           alt="Gallery thumbnail"
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+          className="mx-auto transition-transform duration-500 group-hover:scale-110"
         />
       </div>
     </Card>
