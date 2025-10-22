@@ -20,6 +20,7 @@ interface ImageFormDialogProps {
 }
 
 export const ImageFormDialog = ({ open, onOpenChange, imageSrc }: ImageFormDialogProps) => {
+  const [storeName, setStoreName] = useState("");
   const [urls, setUrls] = useState<string[]>([]);
   const [criteria, setCriteria] = useState("");
   const [file, setFile] = useState<File | null>(null);
@@ -47,6 +48,10 @@ export const ImageFormDialog = ({ open, onOpenChange, imageSrc }: ImageFormDialo
 
   const handleSubmit = () => {
     // Validate form
+    if (!storeName.trim()) {
+      toast.error("Please enter store name");
+      return;
+    }
     if (urls.some(url => url.trim() === "")) {
       toast.error("Please fill in all URL fields or remove empty ones");
       return;
@@ -61,11 +66,12 @@ export const ImageFormDialog = ({ open, onOpenChange, imageSrc }: ImageFormDialo
     }
 
     // Process form data
-    console.log({ urls, criteria, file });
+    console.log({ storeName, urls, criteria, file });
     toast.success("Form submitted successfully!");
     
     // Reset form
-    setUrls([""]);
+    setStoreName("");
+    setUrls([]);
     setCriteria("");
     setFile(null);
     onOpenChange(false);
@@ -92,6 +98,17 @@ export const ImageFormDialog = ({ open, onOpenChange, imageSrc }: ImageFormDialo
         </div>
 
         <div className="space-y-6">
+          {/* Store Name Section */}
+          <div className="space-y-2">
+            <Label htmlFor="storeName" className="text-base font-semibold">Store Name</Label>
+            <Input
+              id="storeName"
+              value={storeName}
+              onChange={(e) => setStoreName(e.target.value)}
+              placeholder="Enter store name"
+            />
+          </div>
+
           {/* URLs Section */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
