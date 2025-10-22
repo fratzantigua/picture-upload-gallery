@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 interface Template {
   id: string;
   thumbnail_url: string;
+  preview: string;
 }
 
 const Index = () => {
@@ -76,8 +77,8 @@ const Index = () => {
           {images.slice(0, visibleCount).map((image) => (
             <GalleryCard
               key={image.id}
-              image={image.thumbnail_url}
-              onClick={() => handleImageClick(image.thumbnail_url)}
+              image={image.preview}
+              onClick={() => handleImageClick(image.preview)}
             />
           ))}
         </div>
