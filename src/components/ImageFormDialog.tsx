@@ -17,17 +17,20 @@ interface ImageFormDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   imageSrc: string;
+  templateId: string;
 }
 
 export const ImageFormDialog = ({
   open,
   onOpenChange,
   imageSrc,
+  templateId,
 }: ImageFormDialogProps) => {
   const [storeName, setStoreName] = useState("");
+  const [email, setEmail] = useState("");
   const [urls, setUrls] = useState<string[]>([]);
   const [criteria, setCriteria] = useState("");
-  const [file, setFile] = useState<File | null>(null);
+  const [files, setFiles] = useState<File[]>([]);
 
   const addUrl = () => {
     setUrls([...urls, ""]);
@@ -44,41 +47,69 @@ export const ImageFormDialog = ({
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setFile(e.target.files[0]);
-      toast.success("File selected: " + e.target.files[0].name);
+    if (e.target.files) {
+      const newFiles = Array.from(e.target.files);
+      setFiles((prevFiles) => [...prevFiles, ...newFiles]);
+      toast.success(`${newFiles.length} file(s) selected`);
     }
   };
 
-  const handleSubmit = () => {
+  const removeFile = (index: number) => {
+    setFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
+  };
+
+  const handleSubmit = async () => {
     // Validate form
     if (!storeName.trim()) {
       toast.error("Please enter store name");
       return;
     }
-    if (urls.some((url) => url.trim() === "")) {
-      toast.error("Please fill in all URL fields or remove empty ones");
+    if (!email.trim()) {
+      toast.error("Please enter your email");
       return;
     }
-    if (!criteria.trim()) {
-      toast.error("Please enter criteria");
+    if (!/\S+@\S+\.\S+/.test(email)) {
+      toast.error("Please enter a valid email address");
       return;
     }
-    if (!file) {
-      toast.error("Please upload a file");
+    if (urls.every((url) => url.trim() === "") && files.length === 0) {
+      toast.error("Please input URL or Upload a file");
       return;
     }
 
-    // Process form data
-    console.log({ storeName, urls, criteria, file });
-    toast.success("Form submitted successfully!");
+    const formData = new FormData();
+    formData.append("id", templateId);
+    formData.append("storeName", storeName);
+    formData.append("email", email);
+    formData.append("urls", JSON.stringify(urls));
+    formData.append("criteria", criteria);
+    files.forEach((file) => formData.append("file", file));
 
-    // Reset form
-    setStoreName("");
-    setUrls([]);
-    setCriteria("");
-    setFile(null);
-    onOpenChange(false);
+    try {
+      const response = await fetch(
+        "https://n8n.n-compass.online/webhook-test/request-form",
+        {
+          method: "POST",
+          body: formData,
+        },
+      );
+
+      if (response.ok) {
+        toast.success("Form submitted successfully!");
+        // Reset form
+        setStoreName("");
+        setEmail("");
+        setUrls([]);
+        setCriteria("");
+        setFiles([]);
+        onOpenChange(false);
+      } else {
+        toast.error("Submission failed. Please try again.");
+      }
+    } catch (error) {
+      console.error("Submission error:", error);
+      toast.error("An error occurred while submitting the form.");
+    }
   };
 
   return (
@@ -107,6 +138,20 @@ export const ImageFormDialog = ({
               value={storeName}
               onChange={(e) => setStoreName(e.target.value)}
               placeholder="Enter store name"
+            />
+          </div>
+
+          {/* Email Section */}
+          <div className="space-y-2">
+            <Label htmlFor="email" className="text-base font-semibold">
+              Email
+            </Label>
+            <Input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Enter your email"
             />
           </div>
 
@@ -172,7 +217,7 @@ export const ImageFormDialog = ({
             <Label htmlFor="file" className="text-base font-semibold">
               Upload File
             </Label>
-            <div className="flex items-center gap-3">
+            <div className="flex items-start gap-3">
               <Button
                 type="button"
                 onClick={() => document.getElementById("file-input")?.click()}
@@ -182,17 +227,38 @@ export const ImageFormDialog = ({
                 <Upload className="h-4 w-4" />
                 Choose File
               </Button>
-              {file && (
-                <span className="text-sm text-muted-foreground truncate flex-1">
-                  {file.name}
-                </span>
-              )}
+              <div className="flex-1 space-y-2">
+                {files.length > 0 ? (
+                  files.map((file, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center justify-between text-sm text-muted-foreground bg-muted/50 p-2 rounded-md"
+                    >
+                      <span className="truncate pr-2">{file.name}</span>
+                      <Button
+                        type="button"
+                        onClick={() => removeFile(index)}
+                        size="icon"
+                        variant="ghost"
+                        className="h-6 w-6 shrink-0 hover:bg-destructive/10 hover:text-destructive"
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))
+                ) : (
+                  <p className="text-sm text-muted-foreground pt-2">
+                    No files selected
+                  </p>
+                )}
+              </div>
             </div>
             <input
               id="file-input"
               type="file"
               onChange={handleFileChange}
               className="hidden"
+              multiple
             />
           </div>
 

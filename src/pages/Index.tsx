@@ -11,6 +11,9 @@ interface Template {
 
 const Index = () => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [selectedTemplateId, setSelectedTemplateId] = useState<string | null>(
+    null,
+  );
   const [dialogOpen, setDialogOpen] = useState(false);
   const [visibleCount, setVisibleCount] = useState(6);
   const [images, setImages] = useState<Template[]>([]);
@@ -54,8 +57,9 @@ const Index = () => {
     fetchImages();
   }, []);
 
-  const handleImageClick = (image: string) => {
-    setSelectedImage(image);
+  const handleImageClick = (image: Template) => {
+    setSelectedImage(image.preview);
+    setSelectedTemplateId(image.id);
     setDialogOpen(true);
   };
 
@@ -78,7 +82,7 @@ const Index = () => {
             <GalleryCard
               key={image.id}
               image={image.preview}
-              onClick={() => handleImageClick(image.preview)}
+              onClick={() => handleImageClick(image)}
             />
           ))}
         </div>
@@ -98,11 +102,12 @@ const Index = () => {
       </div>
 
       {/* Dialog */}
-      {selectedImage && (
+      {selectedImage && selectedTemplateId && (
         <ImageFormDialog
           open={dialogOpen}
           onOpenChange={setDialogOpen}
           imageSrc={selectedImage}
+          templateId={selectedTemplateId}
         />
       )}
     </div>
