@@ -25,7 +25,7 @@ const Index = () => {
         {/* Header */}
         <header className="text-center mb-16 space-y-4">
           <h1 className="text-5xl md:text-6xl font-bold bg-gradient-to-r from-primary via-accent to-primary bg-clip-text text-transparent animate-in fade-in slide-in-from-bottom-4 duration-1000">
-            Image Gallery
+            NTV360 Flyer Request Form
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto animate-in fade-in slide-in-from-bottom-5 duration-1000 delay-150">
             Click on any image to view details and submit related information
