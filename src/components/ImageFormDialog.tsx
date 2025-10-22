@@ -89,15 +89,16 @@ export const ImageFormDialog = ({ open, onOpenChange, imageSrc }: ImageFormDialo
           </DialogDescription>
         </DialogHeader>
 
-        <div className="aspect-video w-full overflow-hidden rounded-lg border border-border mb-6">
-          <img 
-            src={imageSrc} 
-            alt="Selected" 
-            className="w-full h-full object-cover"
-          />
-        </div>
-
         <div className="space-y-6">
+          {/* Thumbnail Image */}
+          <div className="aspect-video w-full overflow-hidden rounded-lg border border-border">
+            <img 
+              src={imageSrc} 
+              alt="Selected" 
+              className="w-full h-full object-cover"
+            />
+          </div>
+
           {/* Store Name Section */}
           <div className="space-y-2">
             <Label htmlFor="storeName" className="text-base font-semibold">Store Name</Label>
