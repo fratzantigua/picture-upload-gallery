@@ -28,7 +28,7 @@ const Index = () => {
             NTV360 Flyer Request Form
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto animate-in fade-in slide-in-from-bottom-5 duration-1000 delay-150">
-            Click on any image to view details and submit related information
+            Pick a template below and submit flyer information
           </p>
         </header>
 

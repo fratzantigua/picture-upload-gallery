@@ -19,7 +19,11 @@ interface ImageFormDialogProps {
   imageSrc: string;
 }
 
-export const ImageFormDialog = ({ open, onOpenChange, imageSrc }: ImageFormDialogProps) => {
+export const ImageFormDialog = ({
+  open,
+  onOpenChange,
+  imageSrc,
+}: ImageFormDialogProps) => {
   const [storeName, setStoreName] = useState("");
   const [urls, setUrls] = useState<string[]>([]);
   const [criteria, setCriteria] = useState("");
@@ -52,7 +56,7 @@ export const ImageFormDialog = ({ open, onOpenChange, imageSrc }: ImageFormDialo
       toast.error("Please enter store name");
       return;
     }
-    if (urls.some(url => url.trim() === "")) {
+    if (urls.some((url) => url.trim() === "")) {
       toast.error("Please fill in all URL fields or remove empty ones");
       return;
     }
@@ -68,7 +72,7 @@ export const ImageFormDialog = ({ open, onOpenChange, imageSrc }: ImageFormDialo
     // Process form data
     console.log({ storeName, urls, criteria, file });
     toast.success("Form submitted successfully!");
-    
+
     // Reset form
     setStoreName("");
     setUrls([]);
@@ -82,26 +86,26 @@ export const ImageFormDialog = ({ open, onOpenChange, imageSrc }: ImageFormDialo
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-card">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
-            Image Details
+            Flyer Request Form
           </DialogTitle>
-          <DialogDescription>
-            Fill in the information below for this image
-          </DialogDescription>
+          <DialogDescription>Fill in the information below</DialogDescription>
         </DialogHeader>
 
         <div className="space-y-6">
           {/* Thumbnail Image */}
           <div className="aspect-video w-full overflow-hidden rounded-lg border border-border">
-            <img 
-              src={imageSrc} 
-              alt="Selected" 
+            <img
+              src={imageSrc}
+              alt="Selected"
               className="w-full h-full object-cover"
             />
           </div>
 
           {/* Store Name Section */}
           <div className="space-y-2">
-            <Label htmlFor="storeName" className="text-base font-semibold">Store Name</Label>
+            <Label htmlFor="storeName" className="text-base font-semibold">
+              Store Name
+            </Label>
             <Input
               id="storeName"
               value={storeName}
@@ -113,7 +117,9 @@ export const ImageFormDialog = ({ open, onOpenChange, imageSrc }: ImageFormDialo
           {/* URLs Section */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
-              <Label htmlFor="url" className="text-base font-semibold">URLs</Label>
+              <Label htmlFor="url" className="text-base font-semibold">
+                URLs
+              </Label>
               <Button
                 type="button"
                 onClick={addUrl}
@@ -126,7 +132,9 @@ export const ImageFormDialog = ({ open, onOpenChange, imageSrc }: ImageFormDialo
               </Button>
             </div>
             {urls.length === 0 && (
-              <p className="text-sm text-muted-foreground">Click "Add URL" to add a URL field</p>
+              <p className="text-sm text-muted-foreground">
+                Click "Add URL" to add a URL field
+              </p>
             )}
             {urls.map((url, index) => (
               <div key={index} className="flex gap-2">
@@ -151,7 +159,9 @@ export const ImageFormDialog = ({ open, onOpenChange, imageSrc }: ImageFormDialo
 
           {/* Criteria Section */}
           <div className="space-y-2">
-            <Label htmlFor="criteria" className="text-base font-semibold">Criteria</Label>
+            <Label htmlFor="criteria" className="text-base font-semibold">
+              Criteria
+            </Label>
             <Textarea
               id="criteria"
               value={criteria}
@@ -163,11 +173,13 @@ export const ImageFormDialog = ({ open, onOpenChange, imageSrc }: ImageFormDialo
 
           {/* File Upload Section */}
           <div className="space-y-2">
-            <Label htmlFor="file" className="text-base font-semibold">Upload File</Label>
+            <Label htmlFor="file" className="text-base font-semibold">
+              Upload File
+            </Label>
             <div className="flex items-center gap-3">
               <Button
                 type="button"
-                onClick={() => document.getElementById('file-input')?.click()}
+                onClick={() => document.getElementById("file-input")?.click()}
                 variant="outline"
                 className="gap-2"
               >
@@ -189,7 +201,7 @@ export const ImageFormDialog = ({ open, onOpenChange, imageSrc }: ImageFormDialo
           </div>
 
           {/* Submit Button */}
-          <Button 
+          <Button
             onClick={handleSubmit}
             className="w-full bg-gradient-to-r from-primary to-accent hover:opacity-90 transition-opacity"
             size="lg"
