@@ -1,18 +1,57 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { GalleryCard } from "@/components/GalleryCard";
 import { ImageFormDialog } from "@/components/ImageFormDialog";
-import gallery1 from "@/assets/gallery-1.jpg";
-import gallery2 from "@/assets/gallery-2.jpg";
-import gallery3 from "@/assets/gallery-3.jpg";
-import gallery4 from "@/assets/gallery-4.jpg";
-import gallery5 from "@/assets/gallery-5.jpg";
-import gallery6 from "@/assets/gallery-6.jpg";
+import { Button } from "@/components/ui/button";
+
+interface Template {
+  id: string;
+  thumbnail_url: string;
+}
 
 const Index = () => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [visibleCount, setVisibleCount] = useState(6);
+  const [images, setImages] = useState<Template[]>([]);
 
-  const images = [gallery1, gallery2, gallery3, gallery4, gallery5, gallery6];
+  useEffect(() => {
+    const fetchImages = async () => {
+      try {
+        const response = await fetch(
+          "https://hbrzlrsxxgrpebtvcxgy.supabase.co/rest/v1/rpc/get_templates_paginated",
+          {
+            method: "POST",
+            headers: {
+              "content-profile": "public",
+              authorization:
+                "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhicnpscnN4eGdycGVidHZjeGd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM0MjkzNzYsImV4cCI6MjA2OTAwNTM3Nn0.BcT3Qo71jmrcDS8OtPYMVsS2vvFfDbNJFo6l1jl3dtY",
+              "content-type": "application/json",
+              apikey:
+                "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImhicnpscnN4eGdycGVidHZjeGd5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTM0MjkzNzYsImV4cCI6MjA2OTAwNTM3Nn0.BcT3Qo71jmrcDS8OtPYMVsS2vvFfDbNJFo6l1jl3dtY",
+            },
+            body: JSON.stringify({
+              p_requesting_user_id: "87ca1e95-1d30-4ba7-9c96-949284e30693",
+              p_page: 1,
+              p_limit: 20,
+              p_search: null,
+              p_filter: "all",
+              p_sort_by: "updated_at",
+              p_sort_order: "desc",
+            }),
+          },
+        );
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const data = await response.json();
+        setImages(data);
+      } catch (error) {
+        console.error("Error fetching images:", error);
+      }
+    };
+
+    fetchImages();
+  }, []);
 
   const handleImageClick = (image: string) => {
     setSelectedImage(image);
@@ -34,14 +73,27 @@ const Index = () => {
 
         {/* Gallery Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 animate-in fade-in slide-in-from-bottom-6 duration-1000 delay-300">
-          {images.map((image, index) => (
+          {images.slice(0, visibleCount).map((image) => (
             <GalleryCard
-              key={index}
-              image={image}
-              onClick={() => handleImageClick(image)}
+              key={image.id}
+              image={image.thumbnail_url}
+              onClick={() => handleImageClick(image.thumbnail_url)}
             />
           ))}
         </div>
+
+        {/* Load More Button */}
+        {visibleCount < images.length && (
+          <div className="text-center mt-12 animate-in fade-in slide-in-from-bottom-7 duration-1000 delay-500">
+            <Button
+              onClick={() => setVisibleCount(images.length)}
+              size="lg"
+              className="px-8 py-6 text-lg"
+            >
+              Load More
+            </Button>
+          </div>
+        )}
       </div>
 
       {/* Dialog */}
